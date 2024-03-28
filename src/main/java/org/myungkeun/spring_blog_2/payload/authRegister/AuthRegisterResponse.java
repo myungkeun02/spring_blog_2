@@ -11,6 +11,7 @@ import org.myungkeun.spring_blog_2.entities.Role;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthRegisterResponse {
+    // res에서 왜 username이 email로 리턴이 되는걸까..
     private String username;
     private String email;
     private Role role;

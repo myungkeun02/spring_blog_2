@@ -1,6 +1,7 @@
 package org.myungkeun.spring_blog_2.config;
 
 import lombok.RequiredArgsConstructor;
+import org.myungkeun.spring_blog_2.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -17,10 +19,15 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private static final String[] WHITE_LIST_URL = {
             "/**",
-            "/api/**"
+            "/api/**",
+            "/api/auth/**",
+            "/api/user/**",
+            "/swagger-ui/**"
     };
 
     private final AuthenticationProvider authenticationProvider;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
 
     //보안필터체인 설정 / 애플리케이션의 보안을 관리하고 요청에 대한 인증 및 권한 부여를 구현
     @Bean
@@ -33,7 +40,9 @@ public class SecurityConfig {
                 .sessionManagement(sesstion ->
                         sesstion.sessionCreationPolicy(SessionCreationPolicy
                                 .STATELESS))
-                .authenticationProvider(authenticationProvider);
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return httpSecurity.build();
     }
 }
