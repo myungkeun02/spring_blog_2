@@ -8,9 +8,11 @@ import org.myungkeun.spring_blog_2.payload.userInfo.UserInfoResponse;
 import java.security.Principal;
 
 public interface UserService {
-    UserInfoResponse getUserInfoByToken(HttpServletRequest request, HttpServletResponse response);
-//    UserInfoResponse getUserInfoByToken(Principal connectedUser);
+    UserInfoResponse getUserInfoByToken(Principal connectedUser);
 
-//    String updatePassword(UpdatePasswordRequest request, Principal connectedUser);
+    String updatePassword( Principal connectedUser, UpdatePasswordRequest request);
 
 }
+
+
+//UserInfoResponse getUserInfoByToken(HttpServletRequest request, HttpServletResponse response);

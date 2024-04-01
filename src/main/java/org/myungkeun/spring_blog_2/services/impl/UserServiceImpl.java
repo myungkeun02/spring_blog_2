@@ -22,53 +22,60 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-//
-//    public UserInfoResponse getUserInfoByToken(Principal connectedUser) {
-//        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-//        var userInfoResponse = UserInfoResponse.builder()
-//                .email(user.getUsername())
-//                .username(user.getUsername())
-//                .role(user.getRole())
-//                .build();
-//        return userInfoResponse;
-//    }
-//
-//    public String updatePassword(UpdatePasswordRequest request, Principal connectedUser) {
-//        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-//        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-//            throw new IllegalStateException("Wrong password");
-//        }
-//        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
-//            throw new IllegalStateException("Password do not match");
-//        }
-//        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-//        userRepository.save(user);
-//        return "update password";
-//    }
 
-        public UserInfoResponse getUserInfoByToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String email;
-        final String accessToken;
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("No token");
-        }
-        accessToken = authHeader.substring(7);
-        email = jwtService.extractUsername(accessToken);
-        var user = this.userRepository.findByEmail(email)
-                .orElseThrow();
+    public UserInfoResponse getUserInfoByToken(Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         var userInfoResponse = UserInfoResponse.builder()
-                .email(user.getEmail())
+                .email(user.getUsername())
                 .username(user.getUsername())
                 .role(user.getRole())
                 .build();
         return userInfoResponse;
     }
 
+    public String updatePassword(Principal connectedUser, UpdatePasswordRequest request) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalStateException("Wrong password");
+        }
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new IllegalStateException("Password do not match");
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        return "update password";
+    }
 }
+
+
+
+
+
+
+
+
+
+//public UserInfoResponse getUserInfoByToken(
+//        HttpServletRequest request,
+//        HttpServletResponse response
+//) {
+//    final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+//    final String email;
+//    final String accessToken;
+//    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//        throw new RuntimeException("No token");
+//    }
+//    accessToken = authHeader.substring(7);
+//    email = jwtService.extractUsername(accessToken);
+//    var user = this.userRepository.findByEmail(email)
+//            .orElseThrow();
+//    var userInfoResponse = UserInfoResponse.builder()
+//            .email(user.getEmail())
+//            .username(user.getUsername())
+//            .role(user.getRole())
+//            .build();
+//    return userInfoResponse;
+//}
 
 
 
