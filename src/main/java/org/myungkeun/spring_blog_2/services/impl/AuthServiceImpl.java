@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthRegisterResponse registerUser(
             AuthRegisterRequest request
     ) {
-        var user = User.builder()
+        User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -64,12 +64,15 @@ public class AuthServiceImpl implements AuthService {
                         request.getPassword()
                 )
         );
-        var user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(()-> new UsernameNotFoundException("User not found (loginUser/findByEmail)"));
         var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveUserToken(user, accessToken, refreshToken);
         AuthLoginResponse response = AuthLoginResponse.builder()
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .role(user.getRole())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -116,7 +119,7 @@ public class AuthServiceImpl implements AuthService {
         email = jwtService.extractUsername(refreshToken);
 
         if (email != null) {
-            var user = this.userRepository.findByEmail(email)
+            User user = this.userRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateAccessToken(user);
