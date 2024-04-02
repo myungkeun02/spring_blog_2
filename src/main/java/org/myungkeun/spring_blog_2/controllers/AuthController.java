@@ -2,6 +2,7 @@ package org.myungkeun.spring_blog_2.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.myungkeun.spring_blog_2.exception.UserAlreadyExistsException;
 import org.myungkeun.spring_blog_2.exception.UserNotFoundException;
@@ -30,7 +31,7 @@ public class AuthController {
     //회원가입 api
     @PostMapping("/register")
     public ResponseEntity<ApiResponseDto<?>> registerUser(
-            @RequestBody AuthRegisterRequest request
+            @Valid @RequestBody AuthRegisterRequest request
     ) throws UserAlreadyExistsException, UserServiceLogicException {
 //        return new ResponseEntity<>(authService.registerUser(request), HttpStatus.CREATED);
         return authService.registerUser(request);
@@ -39,7 +40,7 @@ public class AuthController {
     //로그인 api
     @PostMapping("/login")
     public ResponseEntity<ApiResponseDto<?>> loginUser(
-            @RequestBody AuthLoginRequest request
+            @Valid @RequestBody AuthLoginRequest request
     ) throws UserNotFoundException, UserServiceLogicException {
         return authService.loginUser(request);
     }
