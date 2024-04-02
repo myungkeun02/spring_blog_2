@@ -3,6 +3,9 @@ package org.myungkeun.spring_blog_2.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.myungkeun.spring_blog_2.exception.UserNotFoundException;
+import org.myungkeun.spring_blog_2.exception.UserServiceLogicException;
+import org.myungkeun.spring_blog_2.payload.ApiResponseDto;
 import org.myungkeun.spring_blog_2.payload.updataPassword.UpdatePasswordRequest;
 import org.myungkeun.spring_blog_2.payload.userInfo.UserInfoResponse;
 import org.myungkeun.spring_blog_2.services.AuthService;
@@ -20,8 +23,9 @@ public class UserController {
     private final AuthService authService;
 
     @GetMapping()
-    public ResponseEntity<UserInfoResponse> getUserInfoByToken(Principal connectedUser) {
-        return ResponseEntity.ok(userService.getUserInfoByToken(connectedUser));
+    public ResponseEntity<ApiResponseDto<?>> getUserInfoByToken(Principal connectedUser) throws UserNotFoundException, UserServiceLogicException {
+//        return ResponseEntity.ok(userService.getUserInfoByToken(connectedUser));
+        return userService.getUserInfoByToken(connectedUser);
     }
     @PatchMapping("/change/password")
     public ResponseEntity<String> updatePassword(

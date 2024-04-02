@@ -3,6 +3,10 @@ package org.myungkeun.spring_blog_2.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.myungkeun.spring_blog_2.exception.UserAlreadyExistsException;
+import org.myungkeun.spring_blog_2.exception.UserNotFoundException;
+import org.myungkeun.spring_blog_2.exception.UserServiceLogicException;
+import org.myungkeun.spring_blog_2.payload.ApiResponseDto;
 import org.myungkeun.spring_blog_2.payload.authLogin.AuthLoginRequest;
 import org.myungkeun.spring_blog_2.payload.authLogin.AuthLoginResponse;
 import org.myungkeun.spring_blog_2.payload.authRegister.AuthRegisterRequest;
@@ -25,18 +29,19 @@ public class AuthController {
 
     //회원가입 api
     @PostMapping("/register")
-    public ResponseEntity<AuthRegisterResponse> registerUser(
+    public ResponseEntity<ApiResponseDto<?>> registerUser(
             @RequestBody AuthRegisterRequest request
-    ) {
-        return new ResponseEntity<>(authService.registerUser(request), HttpStatus.CREATED);
+    ) throws UserAlreadyExistsException, UserServiceLogicException {
+//        return new ResponseEntity<>(authService.registerUser(request), HttpStatus.CREATED);
+        return authService.registerUser(request);
     }
 
     //로그인 api
     @PostMapping("/login")
-    public ResponseEntity<AuthLoginResponse> loginUser(
+    public ResponseEntity<ApiResponseDto<?>> loginUser(
             @RequestBody AuthLoginRequest request
-    ) {
-        return new ResponseEntity<>(authService.loginUser(request), HttpStatus.OK);
+    ) throws UserNotFoundException, UserServiceLogicException {
+        return authService.loginUser(request);
     }
 
     @PostMapping("/refresh")

@@ -8,7 +8,12 @@ import org.myungkeun.spring_blog_2.entities.Role;
 import org.myungkeun.spring_blog_2.entities.Token;
 import org.myungkeun.spring_blog_2.entities.TokenType;
 import org.myungkeun.spring_blog_2.entities.User;
+import org.myungkeun.spring_blog_2.exception.UserAlreadyExistsException;
+import org.myungkeun.spring_blog_2.exception.UserNotFoundException;
+import org.myungkeun.spring_blog_2.exception.UserServiceLogicException;
 import org.myungkeun.spring_blog_2.jwt.JwtService;
+import org.myungkeun.spring_blog_2.payload.ApiResponseDto;
+import org.myungkeun.spring_blog_2.payload.ApiResponseStatusDto;
 import org.myungkeun.spring_blog_2.payload.authLogin.AuthLoginRequest;
 import org.myungkeun.spring_blog_2.payload.authLogin.AuthLoginResponse;
 import org.myungkeun.spring_blog_2.payload.authRegister.AuthRegisterRequest;
@@ -17,6 +22,8 @@ import org.myungkeun.spring_blog_2.repositories.TokenRepository;
 import org.myungkeun.spring_blog_2.repositories.UserRepository;
 import org.myungkeun.spring_blog_2.services.AuthService;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,47 +43,62 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
 
-    public AuthRegisterResponse registerUser(
+    public ResponseEntity<ApiResponseDto<?>> registerUser(
             AuthRegisterRequest request
-    ) {
-        User user = User.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .build();
-        userRepository.save(user);
+    ) throws UserAlreadyExistsException, UserServiceLogicException {
+        try {
+            User user = User.builder()
+                    .username(request.getUsername())
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(Role.USER)
+                    .build();
+            userRepository.save(user);
 
-        AuthRegisterResponse response = AuthRegisterResponse.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build();
+            AuthRegisterResponse response = AuthRegisterResponse.builder()
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .role(user.getRole())
+                    .build();
 
-        return response;
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new ApiResponseDto<>(201, ApiResponseStatusDto.SUCCESS.name(), response));
+        } catch (Exception e) {
+            throw new UserServiceLogicException();
+        }
+
     }
 
     @Override
-    public AuthLoginResponse loginUser(AuthLoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(()-> new UsernameNotFoundException("User not found (loginUser/findByEmail)"));
-        var accessToken = jwtService.generateAccessToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(user, accessToken, refreshToken);
-        AuthLoginResponse response = AuthLoginResponse.builder()
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .role(user.getRole())
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-        return response;
+    public ResponseEntity<ApiResponseDto<?>> loginUser(AuthLoginRequest request) throws UserNotFoundException, UserServiceLogicException {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+            User user = userRepository.findByEmail(request.getEmail())
+                    .orElseThrow(()-> new UsernameNotFoundException("User not found (loginUser/findByEmail)"));
+            System.out.println(user);
+            var accessToken = jwtService.generateAccessToken(user);
+            var refreshToken = jwtService.generateRefreshToken(user);
+//            saveUserToken(user, accessToken, refreshToken);
+            AuthLoginResponse response = AuthLoginResponse.builder()
+                    .email(user.getEmail())
+                    .username(user.getUsername())
+                    .role(user.getRole())
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .build();
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ApiResponseDto<>(200, ApiResponseStatusDto.SUCCESS.name(), response));
+        } catch (Exception e) {
+            throw new UserServiceLogicException();
+        }
+
     }
 
     private void saveUserToken(User user, String accessToken, String refreshToken) {
