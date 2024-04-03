@@ -1,5 +1,6 @@
 package org.myungkeun.spring_blog_2.handlers;
 
+import org.myungkeun.spring_blog_2.exception.PostServiceLogicException;
 import org.myungkeun.spring_blog_2.exception.UserAlreadyExistsException;
 import org.myungkeun.spring_blog_2.exception.UserNotFoundException;
 import org.myungkeun.spring_blog_2.exception.UserServiceLogicException;
@@ -49,6 +50,12 @@ public class UserServiceExceptionHandler {
                 .body(new ApiResponseDto<>(400, ApiResponseStatusDto.FAIL.name(), errorMessage.toString()));
     }
 
+    @ExceptionHandler(value = PostServiceLogicException.class)
+    public ResponseEntity<ApiResponseDto<?>> PostServiceLogicExceptionHandler(PostServiceLogicException postServiceLogicException) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseDto<>(400, ApiResponseStatusDto.FAIL.name(), postServiceLogicException.getMessage()));
+    }
 
 
 

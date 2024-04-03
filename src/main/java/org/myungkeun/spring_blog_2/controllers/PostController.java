@@ -1,6 +1,7 @@
 package org.myungkeun.spring_blog_2.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.myungkeun.spring_blog_2.payload.api.ApiResponseDto;
 import org.myungkeun.spring_blog_2.payload.post.PostDto;
 import org.myungkeun.spring_blog_2.payload.post.PostsResponseDto;
 import org.myungkeun.spring_blog_2.services.PostService;
@@ -17,41 +18,41 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/")
-    public ResponseEntity<PostDto> createPost(
+    public ResponseEntity<ApiResponseDto<?>> createPost(
             @RequestBody PostDto postDto
     ) {
-        return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
+        return postService.createPost(postDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDto> getPostById(
+    public ResponseEntity<ApiResponseDto<?>> getPostById(
             @PathVariable(name = "id") Long id
     ) {
-        return new ResponseEntity<>(postService.getPostById(id), HttpStatus.OK);
+        return postService.getPostById(id);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<PostsResponseDto> getAllPost(
+    public ResponseEntity<ApiResponseDto<?>> getAllPost(
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
     ) {
-        return new ResponseEntity<>(postService.getAllPost(pageNo, pageSize, sortBy, sortDir), HttpStatus.OK);
+        return postService.getAllPost(pageNo, pageSize, sortBy, sortDir);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PostDto> updatePostById(
-            @RequestBody PostDto postDto,
-            @PathVariable(name = "id") Long id
+    public ResponseEntity<ApiResponseDto<?>> updatePostById(
+            @PathVariable(name = "id") Long id,
+            @RequestBody PostDto postDto
     ) {
-        return new ResponseEntity<>(postService.updatePostById(id, postDto), HttpStatus.OK);
+        return postService.updatePostById(id, postDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(
+    public ResponseEntity<ApiResponseDto<?>> deleteById(
             @PathVariable(name = "id") Long id
     ) {
-        return new ResponseEntity<>(postService.deletePostById(id), HttpStatus.OK);
+        return postService.deletePostById(id);
     }
 }

@@ -17,7 +17,6 @@ import java.security.Principal;
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
-    private final AuthService authService;
 
     @GetMapping()
     public ResponseEntity<ApiResponseDto<?>> getUserInfoByToken(Principal connectedUser
@@ -29,19 +28,6 @@ public class UserController {
             Principal connectedUser,
             @RequestBody UpdatePasswordRequest request
     ) throws UserNotFoundException, UserServiceLogicException{
-//        return ResponseEntity.ok(userService.updatePassword(connectedUser, request));
+        return userService.updatePassword(connectedUser, request);
     }
-
 }
-
-
-
-
-
-
-
-
-//    @GetMapping()
-//    public ResponseEntity<UserInfoResponse> getUserInfoByToken(HttpServletRequest request, HttpServletResponse response) {
-//        return ResponseEntity.ok(userService.getUserInfoByToken(request, response));
-//    }

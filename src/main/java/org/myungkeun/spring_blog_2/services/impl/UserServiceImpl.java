@@ -24,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Override
     public ResponseEntity<ApiResponseDto<?>> getUserInfoByToken(Principal connectedUser) throws UserNotFoundException, UserServiceLogicException {
         try {
             var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -40,6 +41,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     public ResponseEntity<ApiResponseDto<?>> updatePassword(Principal connectedUser, UpdatePasswordRequest request) throws UserNotFoundException, UserServiceLogicException{
         try {
             var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
