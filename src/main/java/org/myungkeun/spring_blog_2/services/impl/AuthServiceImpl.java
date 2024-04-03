@@ -12,8 +12,8 @@ import org.myungkeun.spring_blog_2.exception.UserAlreadyExistsException;
 import org.myungkeun.spring_blog_2.exception.UserNotFoundException;
 import org.myungkeun.spring_blog_2.exception.UserServiceLogicException;
 import org.myungkeun.spring_blog_2.jwt.JwtService;
-import org.myungkeun.spring_blog_2.payload.ApiResponseDto;
-import org.myungkeun.spring_blog_2.payload.ApiResponseStatusDto;
+import org.myungkeun.spring_blog_2.payload.api.ApiResponseDto;
+import org.myungkeun.spring_blog_2.payload.api.ApiResponseStatusDto;
 import org.myungkeun.spring_blog_2.payload.authLogin.AuthLoginRequest;
 import org.myungkeun.spring_blog_2.payload.authLogin.AuthLoginResponse;
 import org.myungkeun.spring_blog_2.payload.authRegister.AuthRegisterRequest;
@@ -42,7 +42,6 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
 
     @Override
-
     public ResponseEntity<ApiResponseDto<?>> registerUser(
             AuthRegisterRequest request
     ) throws UserAlreadyExistsException, UserServiceLogicException {
@@ -84,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
             System.out.println(user);
             var accessToken = jwtService.generateAccessToken(user);
             var refreshToken = jwtService.generateRefreshToken(user);
-//            saveUserToken(user, accessToken, refreshToken);
+            saveUserToken(user, accessToken, refreshToken);
             AuthLoginResponse response = AuthLoginResponse.builder()
                     .email(user.getEmail())
                     .username(user.getUsername())
@@ -125,6 +124,7 @@ public class AuthServiceImpl implements AuthService {
         tokenRepository.saveAll(validUserToken);
     }
 
+    @Override
     public void refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
@@ -132,14 +132,11 @@ public class AuthServiceImpl implements AuthService {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String email;
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
-
         refreshToken = authHeader.substring(7);
         email = jwtService.extractUsername(refreshToken);
-
         if (email != null) {
             User user = this.userRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));

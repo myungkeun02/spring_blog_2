@@ -5,11 +5,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.myungkeun.spring_blog_2.exception.UserAlreadyExistsException;
 import org.myungkeun.spring_blog_2.exception.UserNotFoundException;
 import org.myungkeun.spring_blog_2.exception.UserServiceLogicException;
-import org.myungkeun.spring_blog_2.payload.ApiResponseDto;
+import org.myungkeun.spring_blog_2.payload.api.ApiResponseDto;
 import org.myungkeun.spring_blog_2.payload.authLogin.AuthLoginRequest;
-import org.myungkeun.spring_blog_2.payload.authLogin.AuthLoginResponse;
 import org.myungkeun.spring_blog_2.payload.authRegister.AuthRegisterRequest;
-import org.myungkeun.spring_blog_2.payload.authRegister.AuthRegisterResponse;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;

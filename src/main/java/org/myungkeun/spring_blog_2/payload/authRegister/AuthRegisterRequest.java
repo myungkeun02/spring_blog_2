@@ -19,11 +19,11 @@ public class AuthRegisterRequest {
     @Size(max = 20, message = "최대 글자는 20 입니다.")
     private String username;
 
+    @NotBlank(message = "email is required!")
     @Email(message = "email is not valid format")
-    @NotBlank(message = "email is require")
     private String email;
 
-    @NotBlank(message = "Password is required!")
+    @NotBlank(message = "password is required!")
     @Size(min = 8, max = 20, message = "password must have 8 characters!")
     private String password;
 }

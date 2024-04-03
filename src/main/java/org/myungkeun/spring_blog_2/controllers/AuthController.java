@@ -7,13 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.myungkeun.spring_blog_2.exception.UserAlreadyExistsException;
 import org.myungkeun.spring_blog_2.exception.UserNotFoundException;
 import org.myungkeun.spring_blog_2.exception.UserServiceLogicException;
-import org.myungkeun.spring_blog_2.payload.ApiResponseDto;
+import org.myungkeun.spring_blog_2.payload.api.ApiResponseDto;
 import org.myungkeun.spring_blog_2.payload.authLogin.AuthLoginRequest;
-import org.myungkeun.spring_blog_2.payload.authLogin.AuthLoginResponse;
 import org.myungkeun.spring_blog_2.payload.authRegister.AuthRegisterRequest;
-import org.myungkeun.spring_blog_2.payload.authRegister.AuthRegisterResponse;
 import org.myungkeun.spring_blog_2.services.AuthService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +30,6 @@ public class AuthController {
     public ResponseEntity<ApiResponseDto<?>> registerUser(
             @Valid @RequestBody AuthRegisterRequest request
     ) throws UserAlreadyExistsException, UserServiceLogicException {
-//        return new ResponseEntity<>(authService.registerUser(request), HttpStatus.CREATED);
         return authService.registerUser(request);
     }
 

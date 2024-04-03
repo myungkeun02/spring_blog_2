@@ -1,4 +1,4 @@
-package org.myungkeun.spring_blog_2.payload;
+package org.myungkeun.spring_blog_2.payload.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
